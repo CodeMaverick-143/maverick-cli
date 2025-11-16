@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import chalk from "chalk";
 import figlet from "figlet";
 import { Command, program } from "commander";
-import { login } from "./commands/auth/login.js";
+import { login, logout, whoami } from "./commands/auth/login.js";
 
 dotenv.config();
 
@@ -30,6 +30,8 @@ async function main() {
   program.version("1.4.3")
   .description("Maverick Cli - A cli based AI tool")
   .addCommand(login)
+  .addCommand(logout)
+  .addCommand(whoami)
 
   program.action(()=>{
     program.help();
