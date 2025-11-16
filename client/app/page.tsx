@@ -1,65 +1,152 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
+import { Spinner } from "@/components/ui/spinner";
+
 export default function Home() {
+  const router = useRouter();
+  const { data, isPending } = authClient.useSession();
+
+  // Loading
+  if (isPending) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  // Not logged in → go sign in
+  if (!data?.session || !data?.user) {
+    router.push("/sign-in");
+    return null;
+  }
+
+  const user = data.user;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-black">
+
+      {/* 🔥 Floating Background Blobs */}
+      <div className="absolute -top-32 -left-20 h-96 w-96 rounded-full bg-indigo-600/30 blur-[110px] animate-pulse" />
+      <div className="absolute -bottom-28 -right-10 h-96 w-96 rounded-full bg-purple-600/25 blur-[130px] animate-pulse" />
+
+      {/* Main Card */}
+      <div
+        className="
+          bg-zinc-900/30 
+          backdrop-blur-2xl 
+          border border-zinc-700/50 
+          shadow-[0_0_40px_rgba(80,80,255,0.2)] 
+          rounded-3xl 
+          p-10 
+          w-full 
+          max-w-xl 
+          flex 
+          flex-col 
+          gap-8 
+          animate-fadeIn
+        "
+      >
+
+        {/* Avatar */}
+        <div className="flex justify-center">
+          <div
+            className="
+              h-28 
+              w-28 
+              rounded-full 
+              overflow-hidden 
+              border border-indigo-500/40 
+              shadow-[0_0_20px_rgba(99,102,241,0.6)]
+              hover:scale-105 
+              transition-all 
+              duration-300 
+              transform 
+              hover:rotate-1
+            "
           >
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src={user?.image ?? "/github.svg"}
+              alt="User Avatar"
+              height={112}
+              width={112}
+              className="object-cover"
+              unoptimized
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
         </div>
-      </main>
+
+        {/* User Info */}
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-300 bg-clip-text text-transparent drop-shadow-lg">
+            Hey, {user.name || "User"} 👋
+          </h1>
+          <p className="text-zinc-400 mt-2 text-sm tracking-wide">
+            You're logged in — stay awesome.
+          </p>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-zinc-700/60 to-transparent" />
+
+        {/* User info card */}
+        <div
+          className="
+            bg-zinc-900/40 
+            border border-zinc-700/40 
+            rounded-xl 
+            p-5 
+            shadow-inner
+          "
+        >
+          <div className="flex justify-between text-sm text-zinc-300">
+            <p>Email</p>
+            <p className="font-medium text-indigo-300">{user.email}</p>
+          </div>
+        </div>
+
+        {/* Logout button */}
+        <Button
+          className="
+            w-full 
+            h-11 
+            font-medium 
+            bg-gradient-to-r from-indigo-600 to-purple-600 
+            hover:brightness-110 
+            transition-all 
+            duration-300 
+            rounded-xl 
+            shadow-[0_0_15px_rgba(99,102,241,0.5)]
+          "
+          onClick={() =>
+            authClient.signOut({
+              fetchOptions: {
+                onError: (ctx) => console.log("SignOut Error:", ctx),
+                onSuccess: () => router.push("/sign-in"),
+              },
+            })
+          }
+        >
+          Sign Out
+        </Button>
+
+      </div>
+
+      {/* Animations */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.6s ease-out both;
+        }
+      `}</style>
     </div>
   );
 }
