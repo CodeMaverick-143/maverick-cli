@@ -125,9 +125,14 @@ export async function loginAction(opts) {
       interval
     );
 
-    if (token) {
-      await saveToken(token);
-      outro(chalk.green("✔ Logged in successfully!"));
+      if (token) {
+        try {
+          await saveToken(token);
+          outro(chalk.green("✔ Logged in successfully!"));
+        } catch (err) {
+          console.log(chalk.yellow("⚠️ Warning: Could not save authentication token"));
+          console.log(chalk.yellow("You may need to login again on next use."));
+        }
 
       if(!saved){
         console.log(chalk.yellow("⚠️ Warning: Could not save authentication token"));
