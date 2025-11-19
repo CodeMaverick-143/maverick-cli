@@ -1,17 +1,12 @@
 import chalk from "chalk";
 import { Command } from "commander";
 import yoctoSpinner from "yocto-spinner"
-import { getStoredToken } from "../../../lib/token.js";
+import { requireAuth } from "../../../lib/token.js";
 import prisma from "../../../lib/db.js";
 import { select } from "@clack/prompts";
 
 const wakeUpAction = async()=>{
-    const token = await getStoredToken();
-
-    if(!token?.acces_token){
-        console.log(chalk.red("Not Authenticated. please Login..."))
-        return;
-    }
+    const token = await requireAuth();
 
     const spinner = yoctoSpinner({text:"Fetching user information....."})
     spinner.start()
@@ -21,7 +16,7 @@ const wakeUpAction = async()=>{
         where:{
             sessions:{
                 some:{
-                    token:token.acces_token
+                    token:token.access_token
                 }
             }
         },

@@ -7,14 +7,13 @@ import { deviceAuthorizationClient } from "better-auth/client/plugins";
 
 import chalk from "chalk";
 import { Command } from "commander";
-import fs from "node:fs/promises";
 import open from "open";
 import os from "os";
 import path from "path";
 import yoctoSpinner from "yocto-spinner";
 import * as z from "zod";
 import dotenv from "dotenv";
-import { clearStoredToken, getStoredToken, isTokenExpired, requireAuth } from "../../../lib/token.js";
+import { clearStoredToken, getStoredToken, isTokenExpired, requireAuth, storeToken } from "../../../lib/token.js";
 import prisma from "../../../lib/db.js";
 
 dotenv.config();
@@ -125,22 +124,17 @@ export async function loginAction(opts) {
       interval
     );
 
-      if (token) {
-        try {
-          await saveToken(token);
-          outro(chalk.green("✔ Logged in successfully!"));
-        } catch (err) {
-          console.log(chalk.yellow("⚠️ Warning: Could not save authentication token"));
-          console.log(chalk.yellow("You may need to login again on next use."));
-        }
+    if (token) {
+      const saved = await storeToken(token);
 
-      if(!saved){
+      if (!saved) {
         console.log(chalk.yellow("⚠️ Warning: Could not save authentication token"));
-
-        console.log(chalk.yellow("You may need to login again on next use."))
+        console.log(chalk.yellow("You may need to login again on next use."));
       }
 
-    //    Todo : Get the user data
+      outro(chalk.green("✔ Logged in successfully!"));
+
+      //    Todo : Get the user data
     }
   } catch (err) {
     spinner.stop();
@@ -217,15 +211,6 @@ async function pollForToken(authClient, deviceCode, clientId, interval) {
   });
 }
 
-// --------------------------------------
-//   SAVE TOKEN LOCALLY
-// --------------------------------------
-
-async function saveToken(token) {
-  await fs.mkdir(CONFIG_DIR, { recursive: true });
-  await fs.writeFile(TOKEN_FILE, JSON.stringify(token, null, 2));
-}
-
 export async function logoutAction(){
   intro(chalk.bold("👋🏻 Logout"))
 
@@ -268,7 +253,7 @@ export async function whoamiAction(opts){
 
   const user = await prisma.user.findFirst({
     where:{
-      sesions:{
+      sessions:{
         some:{
           token:token.access_token,
         }
