@@ -1,50 +1,50 @@
 
 import prisma from "../lib/db.js"
 
-export class ChatService{
+export class ChatService {
 
-    async createConversation(userId, mode="chat" , title=null){
+    async createConversation(userId, mode = "chat", title = null) {
         return prisma.conversation.create({
-            data:{
+            data: {
                 userId,
                 mode,
-                title:title || `New ${mode} consversation`
+                title: title || `New ${mode} conversation`
             }
         })
     }
 
-    async getOrCreateConsverstaion(userId, consversationId = null , mode="chat"){
-        if(consversationId){
-            const  consversation = await prisma.consversation.findFirst({
-                where:{
-                    id:consversationId,
+    async getOrCreateConversation(userId, conversationId = null, mode = "chat") {
+        if (conversationId) {
+            const conversation = await prisma.conversation.findFirst({
+                where: {
+                    id: conversationId,
                     userId
                 },
-                include:{
-                    messages:{
-                        orderby:{
-                            createdAt:"asc"
+                include: {
+                    messages: {
+                        orderBy: {
+                            createdAt: "asc"
                         }
                     }
                 }
             });
 
-            if (consversaton){
-                return consversation
+            if (conversation) {
+                return conversation
             }
         }
 
         return await this.createConversation(userId, mode)
     }
 
-    async addMessages(consversationId , role ,content){
+    async createMessage(conversationId, role, content) {
         const contentStr = typeof content === "string"
-        ?content
-        : JSON.stringify(content);
+            ? content
+            : JSON.stringify(content);
 
         return await prisma.message.create({
-            data:{
-                consversationId,
+            data: {
+                conversationId,
                 role,
                 content: contentStr
             }
@@ -52,63 +52,63 @@ export class ChatService{
     }
 
 
-    async getMessages(consversationId){
+    async getMessages(conversationId) {
         const messages = await prisma.message.findMany({
-            where:{consversationId},
-            orderBy:{createdAt:"asc"}
+            where: { conversationId },
+            orderBy: { createdAt: "asc" }
         })
 
-        return messages.map((msg)=>({
+        return messages.map((msg) => ({
             ...msg,
-            content:this.parseContent(msg.content)
+            content: this.parseContent(msg.content)
         }))
     }
 
 
 
-    async getUserConversation(userId){
-        return await prisma.consversation.findmany({
-            where:{userId},
-            orderBy:{updatedAt:"desc"},
-            include:{
-                messages:{
-                    take:1,
-                    orderBy:{createdAt:"desc"}
+    async getUserConversation(userId) {
+        return await prisma.conversation.findMany({
+            where: { userId },
+            orderBy: { updatedAt: "desc" },
+            include: {
+                messages: {
+                    take: 1,
+                    orderBy: { createdAt: "desc" }
                 }
             }
         })
     }
 
 
-    async deleteConsverstion(consversationId,userId){
+    async deleteConversation(conversationId, userId) {
         return await prisma.conversation.deleteMany({
-            where:{
-                id:consversationId,
+            where: {
+                id: conversationId,
                 userId,
             },
         })
     }
 
 
-    async updateTitle(consversationId,title){
-        return await prisma.consversation.update({
-            where:{id:consversationId},
-            data:{title},
+    async updateConversationTitle(conversationId, title) {
+        return await prisma.conversation.update({
+            where: { id: conversationId },
+            data: { title },
         })
     }
 
-    parseContent(content){
-        try{
+    parseContent(content) {
+        try {
             return JSON.parse(content)
-        }catch(error){
+        } catch (error) {
             return content
         }
     }
 
 
-    formateMessageForAI(messages){
-        return messages.map((map)=>({
-            role:msg.role,
+    formatMessagesForAI(messages) {
+        return messages.map((msg) => ({
+            role: msg.role,
             content: typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content)
         }))
     }
