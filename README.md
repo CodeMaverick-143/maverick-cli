@@ -131,16 +131,3 @@ maverick whoami
 - Make sure your database and Better Auth server are running and reachable from this CLI.
 
 ---
-
-## Troubleshooting
-
-- **"You are not logged in" / token not found**  
-  Run `maverick login` again and complete the browser flow.
-
-- **Token expired**  
-  The CLI treats tokens as expired slightly before the real expiry (5‑minute buffer). Re‑run `maverick login`.
-
-- **Database user not found**  
-  Ensure that sessions are being created correctly on the server side for your `access_token`.
-
-If you run into issues, open an issue on the repository with logs, CLI output, and steps to reproduce.
