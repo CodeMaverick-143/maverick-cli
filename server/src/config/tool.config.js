@@ -29,7 +29,7 @@ export const availableTools = [
 
 
 export function getEnabledTools() {
-    tools = {}
+    const tools = {}
     try {
         for (const tool of availableTools) {
             if (tool.enabled) {
@@ -54,24 +54,24 @@ export function getEnabledTools() {
 }
 
 
-export function toggeleTool(toolsId) {
+export function toggleTool(toolsId) {
 
     const tool = availableTools.find(t => t.id === toolsId)
 
     if (tool) {
         tool.enabled = !tool.enabled
-        console.log(chalk.gray(`[DEBUG] Tool ${toolId} toggled to ${tool.enabled}`))
+        console.log(chalk.gray(`[DEBUG] Tool ${toolsId} toggled to ${tool.enabled}`))
 
         return tool.enabled
     }
 
-    console.log(chalk.red(`[ERROR] Tool ${toolId} not found`))
+    console.log(chalk.red(`[ERROR] Tool ${toolsId} not found`))
 
     return false;
 }
 
 
-export function emableTools(toolsId) {
+export function enableTools(toolsId) {
 
     console.log(chalk.gray('[DEBUG] enableTools called with:'), toolsId)
 
@@ -95,8 +95,8 @@ export function emableTools(toolsId) {
 
 export function getEnabledToolNames() {
     const enabledTools = availableTools.filter(t => t.enabled).map(t => t.name)
-    console.log(chalk.gray('[DEBUG] getEnabledToolNames returning:'), names);
-    return names
+    console.log(chalk.gray('[DEBUG] getEnabledToolNames returning:'), enabledTools);
+    return enabledTools
 }
 
 export function resetTools() {
