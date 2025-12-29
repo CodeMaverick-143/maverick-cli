@@ -17,9 +17,10 @@ app.use(
     })
 );
 
-app.use(express.json());
+app.all("/api/auth/*splat", toNodeHandler(auth))
 
-app.all("/api/auth/*", toNodeHandler(auth))
+
+app.use(express.json());
 
 app.get("/api/me", async (req, res) => {
     const session = await auth.api.getSession({
