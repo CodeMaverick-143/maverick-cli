@@ -137,7 +137,7 @@ const DeviceApprovalPage = () => {
             className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center gap-2 shadow-lg"
           >
             {isProcessing.approve ? (
-              <Spinner size="sm" />
+              <Spinner className="size-5" />
             ) : (
               <CheckCircle className="h-5 w-5" />
             )}
@@ -151,7 +151,7 @@ const DeviceApprovalPage = () => {
             className="flex-1 h-12 rounded-xl flex items-center justify-center gap-2"
           >
             {isProcessing.deny ? (
-              <Spinner size="sm" />
+              <Spinner className="size-5" />
             ) : (
               <XCircle className="h-5 w-5" />
             )}
