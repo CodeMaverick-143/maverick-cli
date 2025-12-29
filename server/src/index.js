@@ -11,7 +11,7 @@ const app = express()
 // *----------- CORS --------------*
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin: "https://maverick-cli.vercel.app",
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
@@ -34,7 +34,7 @@ app.head('/', (req, res) => {
 
 app.get("/device", async (req, res) => {
     const { user_code } = req.query
-    res.redirect(`http://localhost:3000/device?user_code=${user_code}`)
+    res.redirect(`https://maverick-cli.vercel.app/device?user_code=${user_code}`)
 })
 
 
