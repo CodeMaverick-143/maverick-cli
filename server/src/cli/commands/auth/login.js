@@ -18,7 +18,7 @@ import prisma from "../../../lib/db.js";
 
 dotenv.config();
 
-const URL = "http://localhost:3005";
+const URL = "https://maverick-cli-backend.onrender.com";
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 
 // ~/.better-auth/token.json
@@ -75,8 +75,7 @@ export async function loginAction(opts) {
 
     if (!data || error) {
       logger.error(
-        `Failed to request device authorization: ${
-          error?.error_description || error?.error
+        `Failed to request device authorization: ${error?.error_description || error?.error
         }`
       );
       process.exit(1);
@@ -211,31 +210,31 @@ async function pollForToken(authClient, deviceCode, clientId, interval) {
   });
 }
 
-export async function logoutAction(){
+export async function logoutAction() {
   intro(chalk.bold("👋🏻 Logout"))
 
   const token = await getStoredToken();
 
-  if(!token){
+  if (!token) {
     console.log(chalk.yellow("You'r are not logged in"));
     process.exit(0);
   }
 
   const shouldLogout = await confirm({
-    message:"Are you sure you want to logout?",
-    initialValue:false
+    message: "Are you sure you want to logout?",
+    initialValue: false
   })
 
-  if(isCancel(shouldLogout) || !shouldLogout){
+  if (isCancel(shouldLogout) || !shouldLogout) {
     cancel("Loggout Cancelled")
     process.exit(0)
   }
 
   const cleared = await clearStoredToken();
 
-  if(cleared){
+  if (cleared) {
     outro(chalk.green("✅ Successfully logged out!"))
-  }else{
+  } else {
     console.log(chalk.yellow("⚠️ Could not clear token file."))
   }
 
@@ -243,27 +242,27 @@ export async function logoutAction(){
 
 
 
-export async function whoamiAction(opts){
+export async function whoamiAction(opts) {
   const token = await requireAuth();
 
-  if(!token?.access_token){
+  if (!token?.access_token) {
     console.log("No access token found. Please login.")
     process.exit(1)
   }
 
   const user = await prisma.user.findFirst({
-    where:{
-      sessions:{
-        some:{
-          token:token.access_token,
+    where: {
+      sessions: {
+        some: {
+          token: token.access_token,
         }
       }
     },
-    select:{
-      id:true,
-      name:true,
-      email:true,
-      image:true
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true
     },
   })
 
@@ -288,10 +287,10 @@ export const login = new Command("login")
 
 
 export const logout = new Command("logout")
-.description("Logout and Clear stored credentials")
-.action(logoutAction)
+  .description("Logout and Clear stored credentials")
+  .action(logoutAction)
 
 export const whoami = new Command("whoami")
-.description("Show current authenticated user")
-.option("--server-url <url>", "The Better Auth server URL",URL)
-.action(whoamiAction)
+  .description("Show current authenticated user")
+  .option("--server-url <url>", "The Better Auth server URL", URL)
+  .action(whoamiAction)
