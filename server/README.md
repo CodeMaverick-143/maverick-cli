@@ -88,6 +88,5 @@ If you want to contribute or run the server locally:
    npm run dev
    ```
 
-## License
-
+## Licenses
 ISC

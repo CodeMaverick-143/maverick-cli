@@ -8,10 +8,11 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   basePath: "api/auth",
+  baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: ["https://maverick-cli.vercel.app"],
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID,
+      clientId: process.env.GITHUB_CLIENT_ID || "Ov23lij4Gu7H5XTLE2jY",
       clientSecret: process.env.GITHUB_CLIENT_SECRET
     }
   },
