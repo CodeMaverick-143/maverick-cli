@@ -22,6 +22,12 @@ export const auth = betterAuth({
       interval: "5s",
     }),
   ],
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: "none",
+      secure: true,
+    },
+  },
 });
 
 
