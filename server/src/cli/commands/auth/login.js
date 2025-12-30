@@ -19,7 +19,7 @@ import prisma from "../../../lib/db.js";
 dotenv.config();
 
 const URL = "https://maverick-cli-backend.onrender.com";
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const CLIENT_ID = process.env.GITHUB_CLIENT_ID || "Ov23lij4Gu7H5XTLE2jY";
 
 // ~/.better-auth/token.json
 export const CONFIG_DIR = path.join(os.homedir(), ".better-auth");

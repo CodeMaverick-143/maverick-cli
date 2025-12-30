@@ -1,16 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldAlert, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { authClient } from "./auth-client";
 
-const DeviceAuthorizationPage = () => {
+const DeviceAuthorizationContent = () => {
   const [userCode, setUserCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlUserCode = searchParams.get("user_code");
+
+  useEffect(() => {
+    if (urlUserCode) {
+      setUserCode(urlUserCode);
+    }
+  }, [urlUserCode]);
 
   // 🔥 Auto-format code into XXXX-XXXX
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +60,7 @@ const DeviceAuthorizationPage = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-zinc-950 to-black px-4">
       <div className="w-full max-w-md bg-zinc-900/40 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 shadow-xl animate-fadeIn flex flex-col gap-6">
-        
+
         {/* Header */}
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-xl bg-indigo-600/20 border border-indigo-600/40">
@@ -128,6 +136,14 @@ const DeviceAuthorizationPage = () => {
         }
       `}</style>
     </div>
+  );
+};
+
+const DeviceAuthorizationPage = () => {
+  return (
+    <Suspense>
+      <DeviceAuthorizationContent />
+    </Suspense>
   );
 };
 
