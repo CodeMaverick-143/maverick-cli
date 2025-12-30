@@ -2,10 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldAlert, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { authClient } from "./auth-client";
 
-const DeviceAuthorizationPage = () => {
+const DeviceAuthorizationContent = () => {
   const [userCode, setUserCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -136,6 +136,14 @@ const DeviceAuthorizationPage = () => {
         }
       `}</style>
     </div>
+  );
+};
+
+const DeviceAuthorizationPage = () => {
+  return (
+    <Suspense>
+      <DeviceAuthorizationContent />
+    </Suspense>
   );
 };
 
