@@ -2,6 +2,15 @@
 
 An intelligent CLI tool powered by AI, featuring a full-stack architecture with a Next.js frontend and an Express/Prisma backend.
 
+## Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/ce1b05b8-7bc0-4061-89c9-aa7a46722898" width="32%" />
+  <img src="https://github.com/user-attachments/assets/cb1cdcd2-7d0e-4cae-9af0-dc83383f151d" width="32%" />
+  <img src="https://github.com/user-attachments/assets/db7678d9-069d-4386-acce-a2b0a7f3b97c" width="32%" />
+</p>
+
+
 ## Features
 
 - **Maverick CLI**: A powerful command-line interface.
