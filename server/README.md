@@ -10,7 +10,7 @@ You can install Maverick globally using npm:
 npm install -g maverick-ai-cli
 ```
 
-## ⚡ Usage
+## Usage
 
 Once installed, you can use the `maverick` command to interact with the CLI.
 
