@@ -73,7 +73,7 @@ If you want to contribute or run the server locally:
    GITHUB_CLIENT_ID="your_client_id"
    GITHUB_CLIENT_SECRET="your_client_secret"
    BETTER_AUTH_SECRET="your_auth_secret"
-   BETTER_AUTH_URL="http://localhost:3000"
+   BETTER_AUTH_URL="https://maverick-cli.onrender.com"
    GOOGLE_API_KEY="your_gemini_api_key"
    ```
 
