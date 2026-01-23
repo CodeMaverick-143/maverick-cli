@@ -12,7 +12,7 @@ export const auth = betterAuth({
   trustedOrigins: ["https://maverick-cli.vercel.app"],
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID || "Ov23lij4Gu7H5XTLE2jY",
+      clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET
     }
   },
