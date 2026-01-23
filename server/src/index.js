@@ -14,10 +14,12 @@ app.set('trust proxy', true);
 app.use(
     cors({
         origin: "https://maverick-cli.vercel.app",
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     })
 );
+
+app.options("*", cors()); // Handle preflight requests explicitly
 
 app.all("/api/auth/*splat", toNodeHandler(auth))
 
