@@ -1,0 +1,242 @@
+---
+import CodeBlock from "./CodeBlock.astro";
+import { Download, TerminalSquare, Sparkles } from "lucide-astro";
+---
+
+<section id="how-it-works" class="py-24 relative overflow-hidden">
+    <!-- Background glow -->
+    <div
+        class="absolute top-1/2 left-0 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"
+    >
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center max-w-2xl mx-auto mb-20">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">How It Works</h2>
+            <p class="text-xl text-gray-400">
+                Get up and running in seconds. No complex configuration
+                required.
+            </p>
+        </div>
+
+        <!-- Layout: Steps on Left, Diagram on Right -->
+        <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
+            <!-- Steps -->
+            <div class="space-y-12">
+                <div class="flex gap-6 group">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 border border-indigo-500/20"
+                    >
+                        <Download class="w-6 h-6" />
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2 text-white">
+                            1. Install CLI
+                        </h3>
+                        <p class="text-gray-400 mb-4">
+                            Install Maverick globally via npm.
+                        </p>
+                        <CodeBlock
+                            code="npm i -g maverick-ai-cli"
+                            title="terminal"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex gap-6 group">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 border border-indigo-500/20"
+                    >
+                        <TerminalSquare class="w-6 h-6" />
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2 text-white">
+                            2. Login & Authenticate
+                        </h3>
+                        <p class="text-gray-400 mb-4">
+                            Securely log in to sync your profile.
+                        </p>
+                        <CodeBlock code="maverick login" title="terminal" />
+                    </div>
+                </div>
+
+                <div class="flex gap-6 group">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-300 border border-indigo-500/20"
+                    >
+                        <Sparkles class="w-6 h-6" />
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-xl font-bold mb-2 text-white">
+                            3. Start Coding
+                        </h3>
+                        <p class="text-gray-400 mb-4">
+                            Interact with your codebase using natural language.
+                        </p>
+                        <CodeBlock
+                            code='maverick chat "optimize this repo"'
+                            title="terminal"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div
+                class="relative p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-2xl"
+            >
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-2xl pointer-events-none"
+                >
+                </div>
+                <h3
+                    class="text-lg font-semibold mb-8 text-center text-gray-300"
+                >
+                    System Architecture
+                </h3>
+
+                <div class="relative w-full aspect-[4/3]">
+                    <svg
+                        viewBox="0 0 400 300"
+                        class="w-full h-full drop-shadow-lg"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                    >
+                        <defs>
+                            <marker
+                                id="arrow"
+                                viewBox="0 0 10 10"
+                                refX="9"
+                                refY="5"
+                                markerWidth="6"
+                                markerHeight="6"
+                                orient="auto"
+                            >
+                                <path
+                                    d="M 0 0 L 10 5 L 0 10 z"
+                                    class="fill-gray-600 stroke-none"></path>
+                            </marker>
+                            <linearGradient
+                                id="boxGradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                            >
+                                <stop
+                                    offset="0%"
+                                    stop-color="rgba(255,255,255,0.1)"></stop>
+                                <stop
+                                    offset="100%"
+                                    stop-color="rgba(255,255,255,0.02)"></stop>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Flow Lines -->
+                        <path
+                            d="M80 150 L120 150"
+                            marker-end="url(#arrow)"
+                            class="stroke-gray-700"></path>
+                        <path
+                            d="M180 150 L220 150"
+                            marker-end="url(#arrow)"
+                            class="stroke-gray-700"></path>
+                        <path
+                            d="M280 150 L320 150"
+                            marker-end="url(#arrow)"
+                            class="stroke-gray-700"></path>
+
+                        <!-- User/IDE -->
+                        <rect
+                            x="20"
+                            y="125"
+                            width="60"
+                            height="50"
+                            rx="6"
+                            fill="url(#boxGradient)"
+                            class="stroke-gray-600"></rect>
+                        <text
+                            x="50"
+                            y="155"
+                            text-anchor="middle"
+                            class="fill-indigo-300 font-mono text-xs font-bold pointer-events-none select-none"
+                            >CLI</text
+                        >
+
+                        <!-- API Gateway -->
+                        <rect
+                            x="120"
+                            y="125"
+                            width="60"
+                            height="50"
+                            rx="6"
+                            fill="url(#boxGradient)"
+                            class="stroke-gray-600"></rect>
+                        <text
+                            x="150"
+                            y="155"
+                            text-anchor="middle"
+                            class="fill-indigo-300 font-mono text-xs font-bold pointer-events-none select-none"
+                            >API</text
+                        >
+
+                        <!-- AI Engine -->
+                        <rect
+                            x="220"
+                            y="110"
+                            width="60"
+                            height="80"
+                            rx="6"
+                            fill="rgba(99, 102, 241, 0.1)"
+                            class="stroke-indigo-500 animate-pulse"></rect>
+                        <text
+                            x="250"
+                            y="155"
+                            text-anchor="middle"
+                            class="fill-indigo-400 font-mono text-xs font-bold pointer-events-none select-none"
+                            >AI</text
+                        >
+
+                        <!-- Tools/Output -->
+                        <rect
+                            x="320"
+                            y="125"
+                            width="60"
+                            height="50"
+                            rx="6"
+                            fill="url(#boxGradient)"
+                            class="stroke-gray-600"></rect>
+                        <text
+                            x="350"
+                            y="155"
+                            text-anchor="middle"
+                            class="fill-indigo-300 font-mono text-xs font-bold pointer-events-none select-none"
+                            >Tools</text
+                        >
+
+                        <!-- Labels -->
+                        <text
+                            x="50"
+                            y="190"
+                            text-anchor="middle"
+                            class="fill-gray-500 text-[10px]">Terminal</text
+                        >
+                        <text
+                            x="250"
+                            y="210"
+                            text-anchor="middle"
+                            class="fill-gray-500 text-[10px]">Processing</text
+                        >
+                        <text
+                            x="350"
+                            y="190"
+                            text-anchor="middle"
+                            class="fill-gray-500 text-[10px]">Action</text
+                        >
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
