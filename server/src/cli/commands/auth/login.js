@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { cancel, confirm, intro, isCancel, outro } from "@clack/prompts";
-import { logger } from "better-auth";
 import { createAuthClient } from "better-auth/client";
 import { deviceAuthorizationClient } from "better-auth/client/plugins";
 
@@ -74,9 +73,8 @@ export async function loginAction(opts) {
     spinner.stop();
 
     if (!data || error) {
-      logger.error(
-        `Failed to request device authorization: ${error?.error_description || error?.error
-        }`
+      console.error(
+        chalk.red(`Failed to request device authorization: ${error?.error_description || error?.error}`)
       );
       process.exit(1);
     }
