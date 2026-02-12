@@ -1,10 +1,8 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import cors from "cors";
 import { auth } from "./lib/auth.js"
-
-dotenv.config()
 
 const app = express()
 
@@ -19,7 +17,7 @@ app.use(
     })
 );
 
-app.options("*", cors()); // Handle preflight requests explicitly
+app.options("/{*splat}", cors()); // Handle preflight requests explicitly
 
 app.all("/api/auth/*splat", toNodeHandler(auth))
 
