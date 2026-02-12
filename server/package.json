@@ -1,6 +1,6 @@
 {
   "name": "maverick-ai-cli",
-  "version": "2.0.0",
+  "version": "3.0.3",
   "description": "",
   "main": "index.js",
   "bin": {

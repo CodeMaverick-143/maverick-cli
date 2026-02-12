@@ -5,10 +5,7 @@ import yoctoSpinner from "yocto-spinner";
 import { marked } from "marked";
 import { markedTerminal } from "marked-terminal"
 import { AIService } from "../ai/google-service.js";
-import { ChatService } from "../../service/chat.service.js";
-import { getStoredToken } from "../../lib/token.js"
-import prisma from "../../lib/db.js";
-import { yo } from "zod/v4/locales";
+import { apiClient } from "../../lib/api-client.js";
 
 marked.use(
     markedTerminal({
@@ -31,41 +28,36 @@ marked.use(
 
 
 const aiService = new AIService();
-const chatService = new ChatService();
 
 
 async function getUserFromToken() {
-    const token = await getStoredToken()
-    if (!token?.access_token) {
-        throw new Error("Not authenticated. Please run 'maverick login' first.")
-    }
     const spinner = yoctoSpinner({ text: "Authenticating...." }).start();
-    const user = await prisma.user.findFirst({
-        where: {
-            sessions: {
-                some: { token: token.access_token }
-            }
-        }
-    });
-
-    if (!user) {
-        spinner.error("User not found");
-        throw new Error("User not found. Please login again")
+    try {
+        const user = await apiClient.getUser();
+        spinner.success(`Welcome back, ${user.name}!`)
+        return user;
+    } catch (err) {
+        spinner.error("Authentication failed");
+        throw err;
     }
-
-    spinner.success(`Welcome back, ${user.name}!`)
-    return user;
 }
 
 
 async function initConversation(userId, conversationId = null, mode = "chat") {
     const spinner = yoctoSpinner({ text: "Loading conversation...." }).start()
 
-    const conversation = await chatService.getOrCreateConversation(
-        userId,
-        conversationId,
-        mode
-    )
+    let conversation;
+    if (conversationId) {
+        try {
+            conversation = await apiClient.getConversation(conversationId);
+        } catch {
+            // conversation not found, create new one
+        }
+    }
+
+    if (!conversation) {
+        conversation = await apiClient.createConversation(mode);
+    }
 
     spinner.success("Conversation Loaded")
 
@@ -83,7 +75,7 @@ async function initConversation(userId, conversationId = null, mode = "chat") {
 
     console.log(conversationInfo)
 
-    if (conversation.message?.length > 0) {
+    if (conversation.messages?.length > 0) {
         console.log(chalk.yellow(" Previous messages: \n"));
         displayMessages(conversation.messages);
     }
@@ -121,16 +113,18 @@ function displayMessages(messages) {
 
 
 async function saveMessage(conversationId, role, content) {
-    const message = await chatService.createMessage(conversationId, role, content)
-    return message
+    return await apiClient.createMessage(conversationId, role, content);
 }
 
 
 
 async function getAIResponse(conversationId) {
     const spinner = yoctoSpinner({ text: "Thinking...", color: "yellow" }).start();
-    const dbMessages = await chatService.getMessages(conversationId)
-    const aiMessages = chatService.formatMessagesForAI(dbMessages)
+    const dbMessages = await apiClient.getMessages(conversationId);
+    const aiMessages = dbMessages.map(msg => ({
+        role: msg.role,
+        content: typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content)
+    }));
 
     let fullResponse = ""
 
@@ -175,7 +169,7 @@ async function updateConversationTitle(conversationId, userInput, messageCount) 
     if (messageCount === 1) {
         const spinner = yoctoSpinner({ text: "Updating conversation title...." }).start();
         const title = userInput.slice(0, 50) + (userInput.length > 50 ? "..." : "");
-        await chatService.updateConversationTitle(conversationId, title)
+        await apiClient.updateTitle(conversationId, title);
         spinner.success("Conversation title updated")
     }
 }
@@ -236,13 +230,13 @@ const chatLoop = async (conversation) => {
 
             await saveMessage(conversation.id, "user", userInput)
 
-            const message = await chatService.getMessages(conversation.id)
+            const messages = await apiClient.getMessages(conversation.id)
 
             const aiResponse = await getAIResponse(conversation.id)
 
             await saveMessage(conversation.id, "assistant", aiResponse)
 
-            await updateConversationTitle(conversation.id, userInput, message.length)
+            await updateConversationTitle(conversation.id, userInput, messages.length)
 
         }
 
@@ -289,5 +283,3 @@ export async function startChat(mode = "chat", conversationId = null) {
 
     }
 }
-
-

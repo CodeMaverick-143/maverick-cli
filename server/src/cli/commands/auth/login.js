@@ -14,12 +14,12 @@ import yoctoSpinner from "yocto-spinner";
 import * as z from "zod";
 import dotenv from "dotenv";
 import { clearStoredToken, getStoredToken, isTokenExpired, requireAuth, storeToken } from "../../../lib/token.js";
-import prisma from "../../../lib/db.js";
+import { apiClient } from "../../../lib/api-client.js";
 
 dotenv.config();
 
 const URL = "https://maverick-cli.onrender.com";
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const CLIENT_ID = "Ov23lij4Gu7H5XTLE2jY";
 
 // ~/.better-auth/token.json
 export const CONFIG_DIR = path.join(os.homedir(), ".better-auth");
@@ -250,21 +250,7 @@ export async function whoamiAction(opts) {
     process.exit(1)
   }
 
-  const user = await prisma.user.findFirst({
-    where: {
-      sessions: {
-        some: {
-          token: token.access_token,
-        }
-      }
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true
-    },
-  })
+  const user = await apiClient.getUser();
 
   console.log(
     chalk.bold.greenBright(`\n USER: ${user.name}

@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { Command } from "commander";
 import yoctoSpinner from "yocto-spinner"
 import { requireAuth } from "../../../lib/token.js";
-import prisma from "../../../lib/db.js";
+import { apiClient } from "../../../lib/api-client.js";
 import { select } from "@clack/prompts";
 import { startChat } from "../../chat/chat-with-ai.js";
 
@@ -13,22 +13,7 @@ const wakeUpAction = async () => {
     spinner.start()
 
 
-    const user = await prisma.user.findFirst({
-        where: {
-            sessions: {
-                some: {
-                    token: token.access_token
-                }
-            }
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true
-        }
-
-    });
+    const user = await apiClient.getUser();
 
     spinner.stop()
 

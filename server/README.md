@@ -1,64 +1,73 @@
 # Maverick AI CLI
 
-Maverick is an intelligent command-line interface powered by AI, designed to be your coding companion directly in your terminal. It features a robust backend integration, secure authentication, and a powerful chat interface.
+An intelligent command-line interface powered by AI — your coding companion directly in your terminal. Authenticate via GitHub, chat with Gemini AI, and get intelligent responses with markdown rendering.
 
 ## Installation
 
-You can install Maverick globally using npm:
+Install globally:
 
 ```bash
 npm install -g maverick-ai-cli
 ```
 
-## Usage
+Or run directly with `npx`:
 
-Once installed, you can use the `maverick` command to interact with the CLI.
+```bash
+npx maverick-ai-cli <command>
+```
 
-### Authentication
+> **Prerequisites:** Node.js 18+ is required.
 
-Before using the AI features, you need to authenticate.
+## Commands
+
+### `login` — Authenticate via GitHub
 
 ```bash
 maverick login
 ```
-This will open a browser window for you to sign in with your GitHub account.
 
-To check your current login status:
+Opens a browser for GitHub OAuth device flow authentication. Your credentials are stored locally at `~/.better-auth/token.json`.
+
+### `whoami` — Check current user
+
 ```bash
 maverick whoami
 ```
 
-To logout:
+### `logout` — Sign out
+
 ```bash
 maverick logout
 ```
 
-### AI Companion
-
-To start a chat session with Maverick:
+### `wakeup` — Start AI session
 
 ```bash
 maverick wakeup
 ```
 
-This will enter an interactive mode where you can:
-- **Chat**: Have a conversation with the AI.
-- **Tools**: (Coming soon) Execute tools and perform actions.
-- **Agent**: (Coming soon) Autonomous agent capabilities.
+Select a mode:
+- **Chat** — Conversational AI with markdown rendering
+- **Tool Calling** — AI with Google Search & code execution *(coming soon)*
+- **Agent** — Autonomous AI agent *(coming soon)*
 
-Supported features in chat:
-- Markdown rendering in terminal.
-- Context-aware conversations.
-- Persistent session history.
+### Chat Features
+
+- Markdown rendering in terminal
+- Context-aware conversations
+- Persistent session history
+- Streaming AI responses
 
 ## Development
 
-If you want to contribute or run the server locally:
+### Server Setup
+
+The backend server powers authentication and data storage. It's deployed at `https://maverick-cli.onrender.com`.
 
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/CodeMaverick-143/maverick-cli.git
-   cd CLI/server
+   cd maverick-cli/server
    ```
 
 2. **Install dependencies:**
@@ -66,18 +75,20 @@ If you want to contribute or run the server locally:
    npm install
    ```
 
-3. **Set up Environment Variables:**
-   Create a `.env` file in the `server` directory with the following:
+3. **Environment Variables:**
+   Create a `.env` file in the `server` directory:
    ```env
    DATABASE_URL="postgresql://..."
-   GITHUB_CLIENT_ID="your_client_id"
-   GITHUB_CLIENT_SECRET="your_client_secret"
-   BETTER_AUTH_SECRET="your_auth_secret"
-   BETTER_AUTH_URL="https://maverick-cli.onrender.com"
-   GOOGLE_API_KEY="your_gemini_api_key"
+   GITHUB_CLIENT_ID="your_github_oauth_app_client_id"
+   GITHUB_CLIENT_SECRET="your_github_oauth_app_client_secret"
+   BETTER_AUTH_SECRET="your_random_auth_secret"
+   BETTER_AUTH_URL="http://localhost:3005"
+   GOOGLE_GENERATIVE_AI_API_KEY="your_gemini_api_key"
+   ORBITAL_MODEL="gemini-2.5-flash"
+   PORT=3005
    ```
 
-4. **Run Database Migrations:**
+4. **Database Setup:**
    ```bash
    npx prisma generate
    npx prisma migrate dev
@@ -88,5 +99,57 @@ If you want to contribute or run the server locally:
    npm run dev
    ```
 
-## Licenses
+### Architecture
+
+```
+server/
+├── src/
+│   ├── index.js              # Express server + API endpoints
+│   ├── cli/
+│   │   ├── main.js            # CLI entry point (Commander.js)
+│   │   ├── commands/
+│   │   │   ├── auth/login.js  # login, logout, whoami
+│   │   │   └── ai/wakeUp.js   # wakeup command
+│   │   ├── chat/
+│   │   │   └── chat-with-ai.js # AI chat loop
+│   │   └── ai/
+│   │       └── google-service.js # Gemini AI SDK
+│   ├── lib/
+│   │   ├── api-client.js      # CLI → Server HTTP client
+│   │   ├── auth.js            # Better Auth config (server)
+│   │   ├── db.js              # Prisma client (server)
+│   │   └── token.js           # Token storage (~/.better-auth/)
+│   ├── config/
+│   │   ├── google.config.js   # AI model config
+│   │   └── tool.config.js     # Tool definitions
+│   └── service/
+│       └── chat.service.js    # Chat DB service (server)
+└── prisma/
+    └── schema.prisma          # Database schema
+```
+
+### API Endpoints
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/auth/*` | ALL | Better Auth routes |
+| `/api/me` | GET | Get current session |
+| `/api/cli/user` | GET | Get user from Bearer token |
+| `/api/cli/conversations` | POST | Create conversation |
+| `/api/cli/conversations/:id` | GET | Get conversation + messages |
+| `/api/cli/conversations/:id/title` | PUT | Update title |
+| `/api/cli/conversations/:id/messages` | GET | List messages |
+| `/api/cli/conversations/:id/messages` | POST | Create message |
+
+## Tech Stack
+
+- **Runtime:** Node.js
+- **AI:** Google Gemini via Vercel AI SDK
+- **Auth:** Better Auth (GitHub OAuth + Device Flow)
+- **Database:** PostgreSQL + Prisma ORM
+- **Server:** Express 5
+- **CLI:** Commander.js, Clack prompts, Chalk
+
+## License
+
 ISC
