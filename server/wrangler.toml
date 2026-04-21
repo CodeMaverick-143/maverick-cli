@@ -1,0 +1,11 @@
+name = "maverick-cli-backend"
+main = "src/index.js"
+compatibility_date = "2025-08-15"
+compatibility_flags = [
+  "nodejs_compat",
+  "enable_nodejs_http_modules",
+  "enable_nodejs_http_server_modules"
+]
+
+[observability]
+enabled = true

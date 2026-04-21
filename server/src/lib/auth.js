@@ -9,7 +9,7 @@ export const auth = betterAuth({
   }),
   basePath: "api/auth",
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: ["https://maverick-cli.vercel.app"],
+  trustedOrigins: [process.env.CLIENT_URL || "https://maverick.auth.xplnhub.tech"],
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID,

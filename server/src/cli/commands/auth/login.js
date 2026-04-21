@@ -17,7 +17,7 @@ import { apiClient } from "../../../lib/api-client.js";
 
 dotenv.config();
 
-const URL = "https://maverick-cli.onrender.com";
+const URL = "http://localhost:3005";
 const CLIENT_ID = "Ov23lij4Gu7H5XTLE2jY";
 
 // ~/.better-auth/token.json

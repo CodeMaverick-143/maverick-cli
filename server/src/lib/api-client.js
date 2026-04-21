@@ -1,6 +1,6 @@
 import { getStoredToken } from "./token.js";
 
-const BASE_URL = "https://maverick-cli.onrender.com";
+const BASE_URL = process.env.SERVER_URL || "http://localhost:3005";
 
 async function getAuthHeaders() {
     const token = await getStoredToken();

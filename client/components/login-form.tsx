@@ -53,7 +53,7 @@ export const LoginForm = () => {
             onClick={() =>
               authClient.signIn.social({
                 provider: "github",
-                callbackURL: "https://maverick-cli.vercel.app",
+                callbackURL: "/",
               })
             }
           >

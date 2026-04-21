@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
+import { httpServerHandler } from "cloudflare:node";
+import { createServer } from "node:http";
+
 import cors from "cors";
 import { auth } from "./lib/auth.js"
 
@@ -11,7 +14,7 @@ app.set('trust proxy', true);
 // *----------- CORS --------------*
 app.use(
     cors({
-        origin: "https://maverick-cli.vercel.app",
+        origin: process.env.CLIENT_URL || "https://maverick.auth.xplnhub.tech",
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         credentials: true,
     })
@@ -36,7 +39,7 @@ app.head('/', (req, res) => {
 
 app.get("/device", async (req, res) => {
     const { user_code } = req.query
-    res.redirect(`https://maverick-cli.vercel.app/device?user_code=${user_code}`)
+    res.redirect(`${process.env.CLIENT_URL || "https://maverick.auth.xplnhub.tech"}/device?user_code=${user_code}`)
 })
 
 
@@ -173,6 +176,12 @@ app.post("/api/cli/conversations/:id/messages", authenticateToken, async (req, r
     }
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`running on PORT : http://localhost:${process.env.PORT}`)
-})
+if (process.env.NODE_ENV !== "production") {
+    app.listen(process.env.PORT, () => {
+        console.log(`running on PORT : http://localhost:${process.env.PORT}`)
+    })
+}
+
+const server = createServer(app);
+
+export default httpServerHandler(server);
