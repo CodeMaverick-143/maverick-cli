@@ -1,8 +1,15 @@
 import "dotenv/config";
 import express from "express";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
-import { httpServerHandler } from "cloudflare:node";
 import { createServer } from "node:http";
+
+let httpServerHandler;
+try {
+    const mod = await import("cloudflare:node");
+    httpServerHandler = mod.httpServerHandler;
+} catch (e) {
+
+}
 
 import cors from "cors";
 import { auth } from "./lib/auth.js"
@@ -11,16 +18,27 @@ const app = express()
 
 app.set('trust proxy', true);
 
-// *----------- CORS --------------*
-app.use(
-    cors({
-        origin: process.env.CLIENT_URL || "https://maverick.auth.xplnhub.tech",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        credentials: true,
-    })
-);
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "http://localhost:3000",
+    "https://maverick-cli.vercel.app",
+    "https://maverick.auth.xplnhub.tech"
+].filter(Boolean);
 
-app.options("/{*splat}", cors()); // Handle preflight requests explicitly
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options("/{*splat}", cors(corsOptions));
 
 app.all("/api/auth/*splat", toNodeHandler(auth))
 
@@ -79,12 +97,10 @@ async function authenticateToken(req, res, next) {
     }
 }
 
-// GET /api/cli/user — get current user from token
 app.get("/api/cli/user", authenticateToken, (req, res) => {
     res.json(req.user);
 });
 
-// POST /api/cli/conversations — create a conversation
 app.post("/api/cli/conversations", authenticateToken, async (req, res) => {
     try {
         const { default: prisma } = await import("./lib/db.js");
@@ -103,7 +119,6 @@ app.post("/api/cli/conversations", authenticateToken, async (req, res) => {
     }
 });
 
-// GET /api/cli/conversations/:id — get a conversation with messages
 app.get("/api/cli/conversations/:id", authenticateToken, async (req, res) => {
     try {
         const { default: prisma } = await import("./lib/db.js");
@@ -125,7 +140,6 @@ app.get("/api/cli/conversations/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// PUT /api/cli/conversations/:id/title — update conversation title
 app.put("/api/cli/conversations/:id/title", authenticateToken, async (req, res) => {
     try {
         const { default: prisma } = await import("./lib/db.js");
@@ -141,7 +155,6 @@ app.put("/api/cli/conversations/:id/title", authenticateToken, async (req, res) 
     }
 });
 
-// GET /api/cli/conversations/:id/messages — get messages
 app.get("/api/cli/conversations/:id/messages", authenticateToken, async (req, res) => {
     try {
         const { default: prisma } = await import("./lib/db.js");
@@ -156,7 +169,6 @@ app.get("/api/cli/conversations/:id/messages", authenticateToken, async (req, re
     }
 });
 
-// POST /api/cli/conversations/:id/messages — create a message
 app.post("/api/cli/conversations/:id/messages", authenticateToken, async (req, res) => {
     try {
         const { default: prisma } = await import("./lib/db.js");
@@ -184,4 +196,4 @@ if (process.env.NODE_ENV !== "production") {
 
 const server = createServer(app);
 
-export default httpServerHandler(server);
+export default httpServerHandler ? httpServerHandler(server) : server;

@@ -90,13 +90,13 @@ export async function requireAuth() {
 
   if (!token) {
     console.log(chalk.red("You are not logged in."));
-    console.log(chalk.gray("Run: your-cli login\n"));
+    console.log(chalk.gray("Run: maverick login\n"));
     process.exit(1);
   }
 
   if (await isTokenExpired()) {
     console.log(chalk.yellow("Your session has expired."));
-    console.log(chalk.gray("Run: your-cli login\n"));
+    console.log(chalk.gray("Run: maverick login\n"));
     process.exit(1);
   }
 
